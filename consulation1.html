@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HealthyMe | Nearby Doctors</title>
+
+  <!-- Leaflet CSS -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css"
+  />
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+      color: #2e7d32;
+      text-align: center;
+      padding: 20px;
+    }
+    h1 {
+      color: #1b5e20;
+      margin-bottom: 10px;
+    }
+    #map {
+      width: 100%;
+      height: 450px;
+      border-radius: 15px;
+      margin-top: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+    #doctorList {
+      margin-top: 25px;
+      text-align: left;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+      background: #f9fff9;
+      border-radius: 15px;
+      padding: 20px;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    }
+    .doctor-item {
+      border-bottom: 1px solid #c8e6c9;
+      padding: 10px 0;
+    }
+    .doctor-item:last-child {
+      border-bottom: none;
+    }
+    .doctor-name {
+      font-weight: 600;
+      color: #1b5e20;
+    }
+    .doctor-type {
+      font-size: 0.9em;
+      color: #388e3c;
+    }
+    button {
+      background-color: #43a047;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      margin-top: 15px;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #2e7d32;
+    }
+    .view-btn {
+      background-color: #81c784;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #1b5e20;
+      margin-left: 10px;
+    }
+    .view-btn:hover {
+      background-color: #66bb6a;
+    }
+    nav {
+      margin-top: 25px;
+    }
+    .nav-btn {
+      text-decoration: none;
+      color: white;
+      background: #43a047;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin: 5px;
+      transition: 0.3s;
+    }
+    .nav-btn:hover {
+      background: #2e7d32;
+    }
+  </style>
+</head>
+<body>
+  <h1>🏥 HealthyMe — Find Nearby Doctors</h1>
+  <p>Allow location access to find doctors and clinics near you.</p>
+
+  <button onclick="findDoctors()">🔍 Find Nearby Doctors</button>
+
+  <div id="map"></div>
+
+  <div id="doctorList">
+    <h2>Nearby Doctors & Clinics</h2>
+    <div id="listContent">Click "Find Nearby Doctors" to see results.</div>
+  </div>
+
+  <nav>
+    <a href="daily_task1.html" class="nav-btn">📋 Daily Routine</a>
+    <a href="notification1.html" class="nav-btn">🔔 Notifications</a>
+    <a href="history1.html" class="nav-btn">📜 History</a>
+  </nav>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
+
+  <script>
+    let map;
+    let markers = [];
+
+    function findDoctors() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+      } else {
+        alert("Geolocation is not supported by your browser.");
+      }
+    }
+
+    function showPosition(position) {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      if (!map) {
+        map = L.map("map").setView([lat, lon], 14);
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution: "&copy; OpenStreetMap contributors",
+        }).addTo(map);
+      }
+
+      // Clear old markers
+      markers.forEach((m) => map.removeLayer(m));
+      markers = [];
+
+      // Add user location marker
+      const userMarker = L.marker([lat, lon])
+        .addTo(map)
+        .bindPopup("<b>You are here</b>")
+        .openPopup();
+      markers.push(userMarker);
+
+      // Fetch nearby doctors using Overpass API
+      const overpassUrl = `https://overpass-api.de/api/interpreter?data=[out:json];(
+        node["amenity"="clinic"](around:4000,${lat},${lon});
+        node["amenity"="hospital"](around:4000,${lat},${lon});
+        node["healthcare"="doctor"](around:4000,${lat},${lon});
+      );out;`;
+
+      fetch(overpassUrl)
+        .then((response) => response.json())
+        .then((data) => {
+          const listDiv = document.getElementById("listContent");
+          listDiv.innerHTML = "";
+
+          if (data.elements.length === 0) {
+            listDiv.innerHTML =
+              "<p>🚫 No nearby doctors or clinics found within 4 km.</p>";
+            return;
+          }
+
+          data.elements.forEach((place, index) => {
+            const name =
+              place.tags.name ||
+              place.tags["healthcare:speciality"] ||
+              "Unnamed Clinic/Hospital";
+            const type = place.tags.amenity || "Doctor";
+            const marker = L.marker([place.lat, place.lon])
+              .addTo(map)
+              .bindPopup(`<b>${name}</b><br>Type: ${type}`);
+            markers.push(marker);
+
+            // Add to list below
+            const div = document.createElement("div");
+            div.className = "doctor-item";
+            div.innerHTML = `
+              <span class="doctor-name">${index + 1}. ${name}</span>
+              <span class="doctor-type">(${type})</span>
+              <button class="view-btn" onclick="focusDoctor(${place.lat}, ${place.lon}, '${name}')">📍 View on Map</button>
+            `;
+            listDiv.appendChild(div);
+          });
+        })
+        .catch(() => {
+          alert("⚠️ Could not fetch nearby doctor data. Try again later.");
+        });
+    }
+
+    function focusDoctor(lat, lon, name) {
+      map.setView([lat, lon], 17);
+      L.popup().setLatLng([lat, lon]).setContent(`<b>${name}</b>`).openOn(map);
+    }
+
+    function showError(error) {
+      switch (error.code) {
+        case error.PERMISSION_DENIED:
+          alert("❌ Please allow location access to find nearby doctors.");
+          break;
+        case error.POSITION_UNAVAILABLE:
+          alert("⚠️ Location information unavailable.");
+          break;
+        case error.TIMEOUT:
+          alert("⏳ Location request timed out.");
+          break;
+        default:
+          alert("❗ Unknown error occurred.");
+      }
+    }
+  </script>
+</body>
+</html>

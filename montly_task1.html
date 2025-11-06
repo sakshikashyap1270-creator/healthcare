@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HealthyMe | Monthly Health Chart</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+      color: #2e7d32;
+      padding: 20px;
+    }
+
+    header {
+      background-color: #2e7d32;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      font-size: 1.5rem;
+      border-radius: 10px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #1b5e20;
+      margin-bottom: 25px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      border: 1px solid #c8e6c9;
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #a5d6a7;
+      color: #1b5e20;
+      font-size: 1.1rem;
+    }
+
+    td {
+      background-color: #f9fff9;
+    }
+
+    input[type="checkbox"] {
+      transform: scale(1.2);
+      margin-right: 10px;
+      accent-color: #2e7d32;
+    }
+
+    .done {
+      text-decoration: line-through;
+      color: #777;
+    }
+
+    nav {
+      text-align: center;
+      margin-top: 25px;
+    }
+
+    .nav-btn {
+      background-color: #43a047;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 10px;
+      margin: 5px;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: 0.3s;
+    }
+
+    .nav-btn:hover {
+      background-color: #2e7d32;
+    }
+  </style>
+</head>
+<body>
+
+  <header>🌿 HealthyMe — Monthly Health Plan</header>
+
+  <div class="container">
+    <h2>🗓️ 30-Day Diet & Exercise Challenge</h2>
+    <table id="monthlyTable">
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th>🍎 Diet Task</th>
+          <th>💪 Exercise Task</th>
+          <th>Done</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <nav>
+      <a href="routine1.html" class="nav-btn">🏠 Back to Routine</a>
+      <a href="daily_task1.html" class="nav-btn">🗓 Daily Tasks</a>
+      <a href="history1.html" class="nav-btn">📅 Task History</a>
+    </nav>
+  </div>
+
+  <script>
+    const dietTasks = [
+      "Eat a bowl of fresh fruits",
+      "Drink 8 glasses of water",
+      "Avoid junk food today",
+      "Eat a green leafy salad",
+      "Include sprouts in your meal",
+      "Avoid sugary drinks",
+      "Eat home-cooked food only",
+      "Have breakfast before 9 AM",
+      "Eat a handful of dry fruits",
+      "Try a fruit smoothie",
+      "Avoid fried foods",
+      "Eat boiled or steamed vegetables",
+      "Include yogurt in lunch",
+      "Avoid late-night snacks",
+      "Eat citrus fruits (orange, lemon)",
+      "Drink green tea",
+      "Avoid processed snacks",
+      "Add more fiber to your meal",
+      "Eat brown rice or millets",
+      "Avoid caffeine after 6 PM",
+      "Eat 5 small meals instead of 3 heavy ones",
+      "Drink coconut water",
+      "Have a protein-rich breakfast",
+      "Avoid white sugar",
+      "Eat lentils or beans",
+      "Avoid overeating at night",
+      "Eat at least 2 fruits today",
+      "Drink detox water",
+      "Avoid oily food",
+      "Eat something new and healthy!"
+    ];
+
+    const exerciseTasks = [
+      "Walk for 30 minutes",
+      "Do 15 minutes of yoga",
+      "Stretch your body for 10 minutes",
+      "Go for a light jog",
+      "Do 20 squats",
+      "Practice deep breathing for 5 minutes",
+      "Dance for 10 minutes",
+      "Climb stairs for 10 minutes",
+      "Do 15 pushups",
+      "Do 20 jumping jacks",
+      "Go cycling",
+      "Do light resistance training",
+      "Take a brisk walk after dinner",
+      "Do 10 minutes of meditation",
+      "Stretch your back and shoulders",
+      "Do core strengthening exercises",
+      "Practice balance exercises",
+      "Walk 6000 steps today",
+      "Try a new yoga pose",
+      "Do slow jogging for 20 minutes",
+      "Take a long walk outdoors",
+      "Try skipping for 5 minutes",
+      "Do full-body stretching",
+      "Take a nature walk",
+      "Do wall sits for 1 minute",
+      "Do planks for 30 seconds",
+      "Try Pilates today",
+      "Do neck and shoulder rolls",
+      "Do deep breathing before sleep",
+      "Rest day with light walking"
+    ];
+
+    const tableBody = document.querySelector("#monthlyTable tbody");
+    const completedTasks = JSON.parse(localStorage.getItem("monthlyProgress")) || {};
+
+    for (let i = 1; i <= 30; i++) {
+      const tr = document.createElement("tr");
+
+      const diet = dietTasks[(i - 1) % dietTasks.length];
+      const exercise = exerciseTasks[(i - 1) % exerciseTasks.length];
+      const isDone = completedTasks[`day${i}`] || false;
+
+      tr.innerHTML = `
+        <td>Day ${i}</td>
+        <td class="${isDone ? 'done' : ''}">${diet}</td>
+        <td class="${isDone ? 'done' : ''}">${exercise}</td>
+        <td><input type="checkbox" ${isDone ? 'checked' : ''} data-day="${i}"></td>
+      `;
+
+      tableBody.appendChild(tr);
+    }
+
+    document.querySelectorAll("input[type='checkbox']").forEach(checkbox => {
+      checkbox.addEventListener("change", function() {
+        const day = this.getAttribute("data-day");
+        completedTasks[`day${day}`] = this.checked;
+        localStorage.setItem("monthlyProgress", JSON.stringify(completedTasks));
+
+        const row = this.closest("tr");
+        if (this.checked) {
+          row.querySelectorAll("td:nth-child(2), td:nth-child(3)").forEach(td => td.classList.add("done"));
+        } else {
+          row.querySelectorAll("td:nth-child(2), td:nth-child(3)").forEach(td => td.classList.remove("done"));
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HealthyMe | Task History</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(to right, #f1f8e9, #e8f5e9);
+      color: #2e7d32;
+      padding: 30px;
+      text-align: center;
+    }
+    h1 {
+      color: #1b5e20;
+      margin-bottom: 25px;
+    }
+    table {
+      width: 85%;
+      margin: 0 auto;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 15px;
+      border-bottom: 1px solid #c8e6c9;
+      text-align: center;
+    }
+    th {
+      background: #43a047;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    tr:hover {
+      background-color: #f1f8f1;
+    }
+    button {
+      margin-top: 25px;
+      background: #e53935;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #c62828;
+    }
+    nav {
+      margin-top: 25px;
+    }
+    .nav-btn {
+      text-decoration: none;
+      color: white;
+      background: #43a047;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin: 5px;
+      transition: 0.3s;
+    }
+    .nav-btn:hover {
+      background: #2e7d32;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>📜 HealthyMe — Task History</h1>
+
+  <table id="historyTable">
+    <tr>
+      <th>Task</th>
+      <th>Date</th>
+      <th>Time</th>
+    </tr>
+  </table>
+
+  <button onclick="clearHistory()">🗑 Clear History</button>
+
+  <nav>
+    <a href="routine1.html" class="nav-btn">🏠 Back to Routine</a>
+      <a href="tracker1.html" class="nav-btn">📊 Health Tracker</a>
+      <a href="montly_task1.html" class="nav-btn">🗓 Monthly Plan</a>
+      <a href="daily_task1.html" class="nav-btn">⭐ Daily Tasks</a>
+      <a href="notification1.html" class="nav-btn">Notifications</a>
+      <a href="consulation1.html" class="nav-btn">Nearby doctors</a>
+  </nav>
+
+  <script>
+    function loadHistory() {
+      const table = document.getElementById("historyTable");
+      const history = JSON.parse(localStorage.getItem("taskHistory")) || [];
+
+      if (history.length === 0) {
+        const row = table.insertRow();
+        const cell = row.insertCell(0);
+        cell.colSpan = 3;
+        cell.textContent = "No task history yet. Complete some tasks!";
+        cell.style.padding = "20px";
+        cell.style.color = "#555";
+        return;
+      }
+
+      history.forEach(entry => {
+        const row = table.insertRow();
+        row.insertCell(0).textContent = entry.task;
+        row.insertCell(1).textContent = entry.date;
+        row.insertCell(2).textContent = entry.time;
+      });
+    }
+
+    function clearHistory() {
+      if (confirm("Are you sure you want to clear all task history?")) {
+        localStorage.removeItem("taskHistory");
+        location.reload();
+      }
+    }
+
+    loadHistory();
+  </script>
+
+</body>
+</ht

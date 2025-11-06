@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HealthyMe | Daily Routine</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+      color: #2e7d32;
+      text-align: center;
+      padding: 30px;
+    }
+    h1 {
+      color: #1b5e20;
+      margin-bottom: 25px;
+    }
+    h2 {
+      color: #43a047;
+      margin-bottom: 20px;
+    }
+    .task {
+      background: white;
+      padding: 15px;
+      margin: 10px auto;
+      border-radius: 15px;
+      max-width: 500px;
+      text-align: left;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    label {
+      font-size: 1.1rem;
+    }
+    input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.3);
+    }
+    button {
+      background-color: #43a047;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 10px;
+      margin-top: 25px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    button:hover {
+      background-color: #2e7d32;
+    }
+    nav {
+      margin-top: 25px;
+    }
+    .nav-btn {
+      text-decoration: none;
+      color: white;
+      background: #43a047;
+      padding: 10px 15px;
+      border-radius: 8px;
+      margin: 5px;
+      transition: 0.3s;
+    }
+    .nav-btn:hover {
+      background: #2e7d32;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌿 HealthyMe — Your Daily Health Routine</h1>
+  <h2 id="dateDisplay"></h2>
+
+  <div id="taskList"></div>
+
+  <button onclick="saveCompletedTasks()">✅ Save Completed Tasks</button>
+
+  <nav>
+    <a href="history1.html" class="nav-btn">📜 Task History</a>
+    <a href="routine1.html" class="nav-btn">🏠 Back to Routine</a>
+      <a href="tracker1.html" class="nav-btn">📊 Health Tracker</a>
+      <a href="montly_task1.html" class="nav-btn">🗓 Monthly Plan</a>
+      <a href="daily_task1.html" class="nav-btn">⭐ Daily Tasks</a>
+      <a href="notification1.html" class="nav-btn">Notifications</a>
+      
+  </nav>
+
+  <script>
+    // 🗓 Different tasks for each day (7-day rotation)
+    const weeklyTasks = [
+      [
+        "Drink 8 glasses of water 💧",
+        "Walk for 20 minutes 🚶‍♀️",
+        "Eat 1 green vegetable 🥬",
+        "Sleep 8 hours 😴",
+        "Do 10 minutes of meditation 🧘"
+      ],
+      [
+        "Stretch for 15 minutes 🧍‍♂️",
+        "Eat a protein-rich breakfast 🍳",
+        "Avoid sugary snacks 🍫🚫",
+        "Read for 10 minutes 📖",
+        "Drink lemon water in morning 🍋"
+      ],
+      [
+        "Go for a 30-min walk 🏃‍♀️",
+        "Eat two fruits 🍎🍌",
+        "Sleep before 10:30 PM 🛌",
+        "Avoid screens 1 hour before bed 📵",
+        "Do deep breathing for 5 min 🌬️"
+      ],
+      [
+        "Eat a salad for lunch 🥗",
+        "Drink herbal tea instead of soda 🍵",
+        "Practice gratitude 🙏",
+        "Take stairs instead of lift 🪜",
+        "Do 15 pushups 💪"
+      ],
+      [
+        "Drink 10 glasses of water 💧",
+        "Avoid junk food 🍟🚫",
+        "Spend 30 min outdoors 🌳",
+        "Talk to a friend or family 👨‍👩‍👧‍👦",
+        "Sleep for 8 hours 😴"
+      ],
+      [
+        "Do yoga for 20 min 🧘",
+        "Eat nuts or seeds 🥜",
+        "No caffeine after 5 PM ☕🚫",
+        "Stretch before sleep 💤",
+        "Smile often 😊"
+      ],
+      [
+        "Plan next week’s meals 🗓️",
+        "Eat a high-fiber meal 🌾",
+        "Drink green tea 🍃",
+        "Spend 10 min journaling ✍️",
+        "Clean your room for mental clarity 🧹"
+      ]
+    ];
+
+    // 🌞 Pick tasks based on the day of the week
+    const today = new Date();
+    const dayIndex = today.getDay(); // 0 = Sunday, 6 = Saturday
+    const tasks = weeklyTasks[dayIndex];
+
+    document.getElementById("dateDisplay").innerText = today.toDateString();
+
+    const taskListDiv = document.getElementById("taskList");
+    tasks.forEach(task => {
+      const div = document.createElement("div");
+      div.classList.add("task");
+      div.innerHTML = `<label><input type="checkbox" class="task-checkbox" value="${task}">${task}</label>`;
+      taskListDiv.appendChild(div);
+    });
+
+    // ✅ Save completed tasks to localStorage
+    function saveCompletedTasks() {
+      const checkboxes = document.querySelectorAll(".task-checkbox");
+      const completed = [];
+
+      checkboxes.forEach(cb => {
+        if (cb.checked) {
+          const now = new Date();
+          completed.push({
+            task: cb.value,
+            date: now.toLocaleDateString(),
+            time: now.toLocaleTimeString()
+          });
+          cb.checked = false;
+        }
+      });
+
+      if (completed.length === 0) {
+        alert("No tasks selected!");
+        return;
+      }
+
+      let history = JSON.parse(localStorage.getItem("taskHistory")) || [];
+      history = history.concat(completed);
+      localStorage.setItem("taskHistory", JSON.stringify(history));
+
+      alert("✅ Today's completed tasks saved successfully!");
+    }
+  </script>
+
+</body>
+</html>

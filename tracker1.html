@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HealthyMe | Health Tracker</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #e8f5e9, #f1f8e9);
+      color: #2e7d32;
+    }
+
+    header {
+      background-color: #2e7d32;
+      color: white;
+      text-align: center;
+      padding: 15px;
+      font-size: 1.6rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      border-radius: 0 0 20px 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+      color: #1b5e20;
+      margin-bottom: 25px;
+    }
+
+    .input-group {
+      margin: 15px 0;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 5px;
+      color: #388e3c;
+    }
+
+    input[type="number"],
+    select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #c8e6c9;
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    button {
+      background-color: #43a047;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      width: 100%;
+      margin-top: 20px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #2e7d32;
+    }
+
+    .result {
+      background: #f1f8e9;
+      border-left: 5px solid #2e7d32;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      font-size: 1rem;
+      line-height: 1.6;
+    }
+
+    nav {
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .nav-btn {
+      background-color: #43a047;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 10px;
+      margin: 5px;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: 0.3s;
+    }
+
+    .nav-btn:hover {
+      background-color: #2e7d32;
+    }
+  </style>
+</head>
+<body>
+
+  <header>🌿 HealthyMe — Daily Health Tracker</header>
+
+  <div class="container">
+    <h2>Track Your Daily Health Habits</h2>
+
+    <div class="input-group">
+      <label for="sleep">😴 Hours of Sleep Last Night:</label>
+      <input type="number" id="sleep" placeholder="Enter hours (e.g. 7)">
+    </div>
+
+    <div class="input-group">
+      <label for="water">💧 Glasses of Water Today:</label>
+      <input type="number" id="water" placeholder="Enter number (e.g. 8)">
+    </div>
+
+    <div class="input-group">
+      <label for="meals">🍽️ Meals Eaten Today:</label>
+      <input type="number" id="meals" placeholder="Enter number (e.g. 3)">
+    </div>
+
+    <div class="input-group">
+      <label for="mood">😊 How do you feel today?</label>
+      <select id="mood">
+        <option value="">Select your mood</option>
+        <option value="energetic">Energetic</option>
+        <option value="normal">Normal</option>
+        <option value="tired">Tired</option>
+        <option value="stressed">Stressed</option>
+      </select>
+    </div>
+
+    <button onclick="analyzeHealth()">Analyze My Health</button>
+
+    <div class="result" id="result" style="display:none;"></div>
+
+    <nav>
+      <a href="routine1.html" class="nav-btn">🏠 Back to Routine</a>
+      <a href="daily_task1.html" class="nav-btn">🗓 Daily Tasks</a>
+      <a href="history.html" class="nav-btn">📅 Task History</a>
+    </nav>
+  </div>
+
+  <script>
+    function analyzeHealth() {
+      const sleep = parseFloat(document.getElementById('sleep').value);
+      const water = parseFloat(document.getElementById('water').value);
+      const meals = parseFloat(document.getElementById('meals').value);
+      const mood = document.getElementById('mood').value;
+      const resultDiv = document.getElementById('result');
+
+      if (!sleep || !water || !meals || !mood) {
+        alert("Please fill out all fields!");
+        return;
+      }
+
+      let suggestions = [];
+      let score = 0;
+
+      // Sleep analysis
+      if (sleep >= 7 && sleep <= 9) {
+        suggestions.push("✅ Great sleep! Your body is well-rested.");
+        score += 2;
+      } else if (sleep < 6) {
+        suggestions.push("😴 Try to sleep at least 7 hours to boost immunity and focus.");
+      } else {
+        suggestions.push("🕒 Too much sleep can make you feel lazy. Try 7–8 hours.");
+      }
+
+      // Water analysis
+      if (water >= 8) {
+        suggestions.push("💧 Perfect hydration! Keep it up.");
+        score += 2;
+      } else if (water < 5) {
+        suggestions.push("🚰 Drink more water — at least 8 glasses per day to stay hydrated.");
+      } else {
+        suggestions.push("🥤 Good job! Add 1–2 more glasses for optimal hydration.");
+      }
+
+      // Meals analysis
+      if (meals === 3 || meals === 4) {
+        suggestions.push("🍽️ Balanced meal frequency — great job!");
+        score += 2;
+      } else if (meals < 3) {
+        suggestions.push("🍎 Eat at least 3 meals daily to maintain energy.");
+      } else {
+        suggestions.push("🍔 Avoid overeating — 3 to 4 balanced meals are ideal.");
+      }
+
+      // Mood-based tips
+      if (mood === "energetic") {
+        suggestions.push("🌞 You're doing amazing! Keep your routine consistent.");
+        score += 2;
+      } else if (mood === "normal") {
+        suggestions.push("🙂 Maintain your habits and aim for small improvements daily.");
+      } else if (mood === "tired") {
+        suggestions.push("💤 You might be dehydrated or lacking sleep — take rest!");
+      } else if (mood === "stressed") {
+        suggestions.push("🧘 Try deep breathing or a short walk to relieve stress.");
+      }
+
+      let summary = "";
+      if (score >= 6) summary = "🌟 Excellent! You’re maintaining a healthy lifestyle.";
+      else if (score >= 3) summary = "👍 Doing good — just make small improvements.";
+      else summary = "⚠️ Needs attention — focus on sleep, hydration, and balance.";
+
+      resultDiv.style.display = "block";
+      resultDiv.innerHTML = `<h3>🩺 Health Summary</h3><ul>${suggestions.map(s => `<li>${s}</li>`).join("")}</ul><p><strong>${summary}</strong></p>`;
+
+      // Save to localStorage (optional for tracking)
+      const healthLog = JSON.parse(localStorage.getItem("healthLog")) || [];
+      const today = new Date().toLocaleDateString();
+      healthLog.push({ date: today, sleep, water, meals, mood, summary });
+      localStorage.setItem("healthLog", JSON.stringify(healthLog));
+    }
+  </script>
+</body>
+</html>
